@@ -37,6 +37,15 @@ async function run() {
       res.send(result)
     })
 
+    app.get("/mydonation/:email",async (req,res)=>{
+      const email = req.params.email;
+      console.log("email form my donation ",email)
+      const query = {email:email}
+      const donation = donations.find(query);
+      const result =await donation.toArray()
+      res.send(result)
+    })
+
     app.get("/details/:id",async (req,res)=>{
       const id = req.params.id;
       console.log("id is", id);
@@ -58,14 +67,31 @@ async function run() {
     app.post("/campaign",async(req,res)=>{
       const campaign = req.body;
       console.log(campaign);
+      const result = await campaigns.insertOne(campaign)
+      res.send(result);
+    })
+    /* Update State */
+    app.put("/update/:email",async(req,res)=>{
+      const email = req.params.email;
+      console.log("email from update",email)
+      const campaign = req.body;
+      const filter =  {email: email}
+      console.log(campaign);
       const result = await donations.insertOne(campaign)
       res.send(result);
+    })
+
+    app.delete("/delete/:id",async(req,res)=>{
+      const id = req.params.id;
+      console.log(id)
+      const query = {_id :new ObjectId(id)}
+      const result = await campaigns.deleteOne(query);
+      res.send(result)
     })
 
     app.post("/donation",async(req,res)=>{
       const donation = req.body;
       const {_id,...d} = donation;
-      
       console.log(d);
       const result = await donations.insertOne(d)
       res.send(result);
