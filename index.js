@@ -1,16 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require("cors");
-require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const app = express();
-
 app.use(cors());
 app.use(express.json())
-
-
-//
-
 
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.zd2hkzs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -29,7 +24,7 @@ async function run() {
     const campaigns= client.db("SunFlower").collection("campaigns")
     const donations= client.db("SunFlower").collection("donations")
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    //await client.connect();
     const result = campaigns.find()
     
     app.get("/campaign",async (req,res)=>{
@@ -60,7 +55,7 @@ async function run() {
       const email = req.params.email;
       console.log("email is",email);
       const query = {email: email};
-      const mycampaign = campaigns.find(query);
+      const mycampaign = campaigns.find();
       const result = await mycampaign.toArray();
       res.send(result);
     })
@@ -74,16 +69,16 @@ async function run() {
     /* Update State */
     app.put("/update/:email",async(req,res)=>{
       const email = req.params.email;
-      console.log("email from update",email)
+      
       const campaign = req.body;
       const filter =  {email: email}
-      console.log(campaign);
+     
       const result = await donations.insertOne(campaign)
       res.send(result);
     })
     app.delete("/delete/:id",async(req,res)=>{
       const id = req.params.id;
-      console.log(id)
+      
       const query = {_id :new ObjectId(id)}
       const result = await campaigns.deleteOne(query);
       res.send(result)
@@ -91,12 +86,12 @@ async function run() {
     app.post("/donation",async(req,res)=>{
       const donation = req.body;
       const {_id,...d} = donation;
-      console.log(d);
+      
       const result = await donations.insertOne(d)
       res.send(result);
     })
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    //await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
