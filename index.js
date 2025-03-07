@@ -80,21 +80,12 @@ async function run() {
       const result = await donations.insertOne(campaign)
       res.send(result);
     })
-
     app.delete("/delete/:id",async(req,res)=>{
       const id = req.params.id;
       console.log(id)
       const query = {_id :new ObjectId(id)}
       const result = await campaigns.deleteOne(query);
       res.send(result)
-    })
-
-    app.post("/donation",async(req,res)=>{
-      const donation = req.body;
-      const {_id,...d} = donation;
-      console.log(d);
-      const result = await donations.insertOne(d)
-      res.send(result);
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
